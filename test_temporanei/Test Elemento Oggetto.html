@@ -1,0 +1,150 @@
+<html>
+	<head>
+		<title>Progetto 3D 2018 - with lights and textures</title>
+		<style>
+
+		body {
+			font-family: Monospace;
+			background-color: #71b2cf;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+
+		.right {
+			position: absolute;
+			right: 0px;
+			width: 80px;
+		}
+
+	</style>
+
+		<script src="lib/three.min.js"></script>
+		<script src="lib/stats.min.js"></script>
+		<script src="lib/Coordinates.js"></script>
+		<script src="lib/OrbitControls.js"></script>
+	</head>
+	<body>
+		<script>
+		function Start() {
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 400 );
+
+			renderer = new THREE.WebGLRenderer( {antialias: true} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x333333 );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			document.body.appendChild( renderer.domElement );
+
+			camera.position.set(0, 4, 5);
+			camera.lookAt( new THREE.Vector3(0,0,0));
+
+			inserisciLuceEmisferica();
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// UCCELLO ///////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+			var geometriaCorpo = new THREE.BoxGeometry(2, 1, 1);
+			var geometriaTesta = new THREE.BoxGeometry(0.7, 0.7, 0.7);
+			var geometriaAla = new THREE.BoxGeometry(0.7, 0.2, 2);
+			var geometriaBecco = new THREE.BoxGeometry(0.5, 0.1, 0.4);
+			var pivotAlaA = new THREE.Object3D();
+			var pivotAlaB = new THREE.Object3D();
+			var uccello = new THREE.Object3D();
+
+			var materialeCorpo = new THREE.MeshPhongMaterial({color: 0xdddddd});
+			var materialeTesta = new THREE.MeshPhongMaterial({color: 0xbbbbbb});
+			var materialeBecco = new THREE.MeshPhongMaterial({color: 0xff8800});
+
+			var corpo = new THREE.Mesh(geometriaCorpo, materialeCorpo);
+			var testa = new THREE.Mesh(geometriaTesta, materialeTesta);
+			var alaA = new THREE.Mesh(geometriaAla, materialeCorpo);
+			var alaB = new THREE.Mesh(geometriaAla, materialeCorpo);
+			var becco = new THREE.Mesh(geometriaBecco, materialeBecco);
+
+			testa.position.set(1, 0.75, 0);
+			alaA.position.set(0, 0.2, -1);
+			alaB.position.set(0, 0.2, 1);
+			becco.position.set(1.6, 0.8, 0);
+
+			pivotAlaA.add(alaA);
+			pivotAlaB.add(alaB);
+			uccello.add(corpo);
+			uccello.add(testa);
+			uccello.add(becco);
+			uccello.add(pivotAlaA);
+			uccello.add(pivotAlaB);
+
+			oggettoUccello = {
+				mesh:uccello,
+				pivotA:pivotAlaA,
+				pivotB:pivotAlaB,
+				visibile:false,
+				angoloAli:0,
+				velocita:0,
+			};
+
+			oggettoUccello.aggiungi = function(x, z){
+				this.centro = new THREE.Object3D();
+				this.mesh.position.z = -5;
+				this.centro.add(this.mesh);
+				scene.add(this.centro);
+				this.centro.position.set(x, 0, z);
+			};
+
+			oggettoUccello.animazioneAli = function(){
+				this.pivotA.rotation.x += 0.05*Math.cos(this.angoloAli*Math.PI/180);
+				this.pivotB.rotation.x -= 0.05*Math.cos(this.angoloAli*Math.PI/180);
+				this.angoloAli = this.angoloAli%360;
+				this.angoloAli += 5;
+			};
+
+			oggettoUccello.animazioneVolo = function(){
+				this.centro.rotateY(-0.02);
+				this.mesh.position.y += Math.sin(this.velocita) * 0.05;
+				this.velocita = this.velocita%360 + 0.05;
+			};
+
+			oggettoUccello.aggiungi(0,0);
+
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			document.body.appendChild( stats.domElement );
+
+			controls = new THREE.OrbitControls( camera );
+			controls.enableKeys = false;  // disabilito la tastiera, così posso giocare al minigioco senza spostare la camera quando premo le frecce
+			controls.addEventListener( 'change', Render );
+		}  // Start()
+
+		// Luce Emisferica
+		function inserisciLuceEmisferica(){
+			hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
+			hemiLight.color.setHSL( 0.6, 1, 0.6 );
+			hemiLight.position.set( 0, -500, 0 );
+			scene.add( hemiLight );
+		}
+
+		function Update() {
+			requestAnimationFrame( Update );
+			controls.update();
+			oggettoUccello.animazioneAli();
+			oggettoUccello.animazioneVolo();
+			stats.update();
+			Render();
+		}
+
+		function Render() {
+			renderer.render(scene, camera);
+		}
+
+		Start();
+		Update();
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,186 @@
+<html>
+	<head>
+		<title>Progetto 3D 2018 - with lights and textures</title>
+		<style>
+
+		body {
+			font-family: Monospace;
+			background-color: #71b2cf;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+
+		.right {
+			position: absolute;
+			right: 0px;
+			width: 80px;
+		}
+
+	</style>
+
+		<script src="lib/three.min.js"></script>
+		<script src="lib/stats.min.js"></script>
+		<script src="lib/Coordinates.js"></script>
+		<script src="lib/OrbitControls.js"></script>
+	</head>
+	<body>
+		<script>
+		function Start() {
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 400 );
+
+			renderer = new THREE.WebGLRenderer( {antialias: true} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x71b2cf );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			document.body.appendChild( renderer.domElement );
+
+			camera.position.set(0, 0, 5);
+			camera.lookAt( new THREE.Vector3(0,0,0));
+
+			inserisciLuceEmisferica();
+
+			document.addEventListener( 'keydown', onKeyDown);
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// CANNONE ///////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+// Variabili
+			proiettileInScena = false; // true quando è già stato sparato un proettile e si trova in scena;
+			spara = false;  // true quando viene attivato il comando di sparo (barra spaziatrice);
+			potenzaCannone = 0.1; // determina la potenza del cannone, influendo nella velocità verticale e orizzontale;
+			inclinazioneCanna = 20; //Inclinazione della canna del cannone, influisce sulla velocità orizzontale e verticale;
+			velocitaOrizzontale = potenzaCannone*Math.cos(inclinazioneCanna*Math.PI/180); // Componente orizzontale, l'angolo coincide con l'inclinazione della canna;
+			velocitaVerticale = potenzaCannone*Math.sin(inclinazioneCanna*Math.PI/180); // Componente verticale, l'angolo coincide con l'inclinazione della canna;
+			pivotCanna = new THREE.Object3D();
+			pivotCannone = new THREE.Object3D();
+			angoloCanna = 0; // Angolo di movimento oscillatorio della canna;
+			angoloCannone = 0;// Angolo di movimento oscillatorio dell'intero cannone;
+
+			var geometriaBaseCannone = new THREE.BoxGeometry(1, 0.6, 1);
+			var geometriaTestaCannone = new THREE.BoxGeometry(0.6, 0.4, 0.4);
+			var geometriaCannaCannone = new THREE.BoxGeometry(0.25, 0.25, 1.3);
+
+			var materialeBase = new THREE.MeshPhongMaterial({color: 0x333333});
+			var materialeTesta = new THREE.MeshPhongMaterial({color: 0x555555});
+			var materialeCanna = new THREE.MeshPhongMaterial({color: 0x333333});
+
+			var base = new THREE.Mesh(geometriaBaseCannone, materialeBase);
+			var testa = new THREE.Mesh(geometriaTestaCannone, materialeTesta);
+			var canna = new THREE.Mesh(geometriaCannaCannone, materialeCanna);
+
+			testa.position.set(0, 0.5, 0.1);
+			canna.position.set(0, 0.65, 0.7);
+			canna.rotateX(-inclinazioneCanna*Math.PI/180); // Ruoto la canna perchè punti in alto;
+
+			pivotCannone.add(base);
+			pivotCannone.add(testa);
+			pivotCanna.add(canna);
+			pivotCannone.add(pivotCanna);
+			scene.add(pivotCannone);
+
+			// Controllo da tastiera;
+			var onKeyDown = function ( event ) {
+				switch ( event.keyCode ) {
+					case 32: // spazio
+						spara = true;
+						break;
+				}
+			};
+
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			document.body.appendChild( stats.domElement );
+
+			controls = new THREE.OrbitControls( camera );
+			controls.enableKeys = false;  // disabilito la tastiera, così posso giocare al minigioco senza spostare la camera quando premo le frecce
+			controls.addEventListener( 'change', Render );
+		}  // Start()
+
+		// Luce Emisferica
+		function inserisciLuceEmisferica(){
+			hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
+			hemiLight.color.setHSL( 0.6, 1, 0.6 );
+			hemiLight.position.set( 0, 500, 0 );
+			scene.add( hemiLight );
+		}
+
+		function Update() {
+			requestAnimationFrame( Update );
+			controls.update();
+			stats.update();
+
+			// Rotazione oscillatoria della canna;
+			pivotCanna.rotation.y += 0.006*Math.cos(angoloCanna*Math.PI/180);
+			angoloCanna = angoloCanna%360;
+			angoloCanna += 1.5;
+ 			// Rotazione oscillatoria del cannone;
+			pivotCannone.rotation.y += 0.003*Math.cos(angoloCannone*Math.PI/180);
+			angoloCannone = angoloCannone%360;
+			angoloCannone += 1.5;
+
+			// Funzione di controllo dello sparo e animazione;
+			controllaSparo();
+
+			Render();
+		}
+
+		function Render() {
+			renderer.render(scene, camera);
+		}
+
+		/*
+		* Funzione per il controllo degli spari, verifica che il tasto di sparo sia stato premuto
+		* e che non vi sia alcun proiettile in scena, altrimenti sparo = false;
+		*/
+		function controllaSparo(){
+			if(spara && !proiettileInScena){
+				spara = false; // Disabilita subito lo sparo, altrimenti ne insersce più di uno;
+				creaProiettile();
+			}else{
+				spara = false; // altrimenti resta in memoria il true e spara un altro proiettile a fine animazione;
+			}
+			if(proiettileInScena){ // Se c'è un proiettile in scena lo anima;
+				if(proiettile.position.y >= 0){ // Animato finchè non scende al di sotto del terreno; TEMP
+						proiettile.position.z += velocitaOrizzontale;
+						proiettile.position.y += velocitaVerticale;
+						velocitaVerticale -= 0.001; // Gravità;
+					}else{
+						proiettileInScena = false; // Blocca successive animazioni;
+						scene.remove(proiettile); // Rimove il proiettile dalla scena;
+						velocitaVerticale = potenzaCannone*Math.sin(20*Math.PI/180); // Resetta la componente verticale del proettile;
+				}
+			}
+		}
+
+		// Crea il proiettile e lo aggiunge alla scena;
+		function creaProiettile(){
+			var geometriaProiettile = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+			var materialeProiettile = new THREE.MeshPhongMaterial({color: 0x222222});
+
+			proiettile = new THREE.Mesh(geometriaProiettile, materialeProiettile);
+
+			proiettile.position.set(0, 0.85, 1.2); //Posizionato esattamente all'uscita della canna;
+
+			 // Riporta la canna e l'intero cannone in posizione iniziale;
+			angoloCanna = 0;
+			angoloCannone = 0;
+			pivotCanna.rotation.y = 0;
+			pivotCannone.rotation.y = 0;
+
+			scene.add(proiettile);
+			proiettileInScena = true; // Abilito le animazioni del proiettile essendo aggiungo in scena;
+		}
+
+		Start();
+		Update();
+
+		</script>
+	</body>
+</html>
