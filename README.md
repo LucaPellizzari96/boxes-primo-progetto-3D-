@@ -64,10 +64,10 @@ Durante la partita è possibile trovare fra gli ostacoli alcuni PowerUp che poss
 
 ## Screenshots e immagini del Progetto
 
-![Screenshot1](/Screenshots/Screenshot1.jpg)
-![Screenshot2](/Screenshots/Screenshot3.jpg)
-![Screenshot3](/Screenshots/FestinaAllaPartenza.jpg)
-![Screenshot4](/Screenshots/FestoneAlTraguardo.jpg)
+![Screenshot1](/screenshots/Screenshot1.jpg)
+![Screenshot2](/screenshots/Screenshot3.jpg)
+![Screenshot3](/screenshots/FestinaAllaPartenza.jpg)
+![Screenshot4](/screenshots/FestoneAlTraguardo.jpg)
 
 
 #### Fonti
