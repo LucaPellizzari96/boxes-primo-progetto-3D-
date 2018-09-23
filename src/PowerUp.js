@@ -9,7 +9,7 @@ function aggiungiPowerUp(){
   powerUpAttivi.push(0); // TEMP per indicare la z dove terminera'
   powerUpAttivi.push(0); // TEMP per indicare la presenza o meno dell'inversione dei comandi
   // aggiungo i power up alla macchina (ma finche non vengono "presi" non sono visibili)
-  aggiungiCannoneMacchina();
+  aggiungiCannoneMacchina(); // TODO da implementare
   aggiungiScudoMacchina();
   aggiungiIndicatoreMacchina();
   // inserisco i power up "a caso" sulla strada
@@ -129,6 +129,7 @@ function aggiungiCannoneMacchina(){
   var materialeCannone = new THREE.MeshBasicMaterial({color: 0x333333});
   cannoneBonus = new THREE.Mesh(geometriaCannone, materialeCannone);
   cannoneBonus.position.set(0, 2, 0);
+  cannoneBonus.visible = false;
 
   pivotMacchina.add(cannoneBonus);
 }
@@ -138,6 +139,7 @@ function aggiungiScudoMacchina(){
   var materialeScudo = new THREE.MeshPhongMaterial({color: 0x555555});
   scudoBonus = new THREE.Mesh(geometriaScudo, materialeScudo);
   scudoBonus.position.set(0, 0.5, -2.5);
+  scudoBonus.visible = false;
 
   pivotMacchina.add(scudoBonus);
 }

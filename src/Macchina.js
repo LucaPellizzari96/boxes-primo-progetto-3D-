@@ -10,6 +10,7 @@
 			// Geometria e materiale Fuoco e pivot di riferimento
 			arrFuoco = new Array();
 			asseFuoco = new THREE.Object3D();
+			asseFuoco.visible = false; // aspetto che la partita inizi
 
 			var particelle = 100;
 			for(var i = 0; i < particelle; i++){
