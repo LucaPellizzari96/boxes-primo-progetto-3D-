@@ -127,6 +127,12 @@ Alcuni fix generali e update appunti
 * Inserita SpotLight invece della PointLight, fps aumentati da 40 a 58-60
 * Texture potenze di due quindi niente più warnings
 
+### 23/09/2018
+
+* Rimosso shader per il bonus moltiplicatore (è un progetto con i cubi, era una sfera)
+* Inserita la possibilità di mettere in pausa la partita con il tasto P
+* Refactoring del codice per animare la scena (index.html)
+
 ### Sito delle Texture
 
 http://www.wildtextures.com/category/free-textures/

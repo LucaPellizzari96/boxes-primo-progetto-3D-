@@ -25,6 +25,7 @@
 				}
 			}
 		}
+		
 		// ASTEROIDI
 		function controllaAsteroide(){
 			if(numAsteroide < contatoreAsteroide){
@@ -75,6 +76,7 @@
 		function animaMulino(){
 			mulini[numMulini].rotateX(0.05);
 		}
+		
 		// OMINI
 		function aggiornaOmini(){
 			for(var i = 0; i <arrayOmini.length; i++){
@@ -96,17 +98,9 @@
 				powerUpInScena[i].position.y = Math.sin(angoloOscillazioneVerticale) + 0.7; // Oscillazione verticale del powerUp;
 				angoloOscillazioneVerticale = angoloOscillazioneVerticale%(Math.PI*2) + 0.002;
 				powerUpInScena[i].rotateY(0.05);
-				if(powerUpInScenaTipo[i] == "stella"){  // TEMP se e' una stella uso lo shader
-					aggiornaColore(powerUpInScena[i]);
-				}
 			}
 		}
-		// uso uno shader per modificare ad ogni frame il colore del powerUp stella sulla scena
-		function aggiornaColore(sphere){
-			colore3 = randomConRange(1,40)/100; // giallo
-			var uniforms = { materialColor:	{ type: "v3", value: new THREE.Vector3() } };
-			sphere.material.uniforms.materialColor.value = new THREE.Vector3(1.0,1.0,colore3);
-		}
+		
 		// CAMERA A FINE PARTITA
 		function rotateCamera(){
 			if(rotazioneAttuale < rad(360)){ // Se la camera non ha compiuto un giro intorno alla macchina
@@ -114,6 +108,7 @@
 				pivotCamera.rotateY(0.01);
 			}
 		}
+		
 		// PUNTEGGIO
 		function stampaPunteggio(){
 			punteggio = Math.abs(Math.floor(pivotMacchina.position.z));

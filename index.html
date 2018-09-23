@@ -42,29 +42,7 @@
 
 		<div class="contenitore" id="contenitoreBottone" >
 			<button id="bottone" onclick="nuovaPartita()" >Nuova partita</button>
-		</div>
-		
-		<!-- SHADER PER IL BONUS STELLA -->
-		
-		<script type="text/x-glsl" id="vertexStella">
-			varying vec3 vColor;
-			uniform vec3 materialColor;
-			
-			void main() {
-		    	vec3 newPosition = position;	
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-				vColor = materialColor;
-				
-			}
-		</script>
-		
-		<script type="text/x-glsl" id="fragmentStella">
-			varying vec3 vColor;
-
-			void main() {
-				gl_FragColor = vec4(vColor, 1.0);
-			}
-		</script>											   
+		</div>										   
 		
 		<!-- scena THREE.JS -->
 		
@@ -107,17 +85,18 @@
 		tipoOstacoli = new Array(); //Array per la gestione delle collisione, indica solo il tipo di ostacolo con le stringhe (es. "asteroide")
 		var rimuoviOstacolo = -1;  // variabile che mi dice quale ostacolo va rimosso (dopo la collisione se la macchina aveva lo scudo)
 
-		// Variabili per i PowerUp
+		// VARIABILI PER I POWER UP
 		numeroPowerUp = 49; //Sono presenti 49 powerUp in pista, uno ogni 4 ostacoli;
 		angoloOscillazioneVerticale = 0;
 		comandiInvertiti = false;
 
-		// Variabili ausiliarie
+		// VARIABILI AUSILIARIE
 		var rotazioneAttuale = 0;
 		var bottoneInserito = false;
 		punteggio = 0;  // variabile per tenere conto dei punti in base alla distanza percorsa
 		punteggioBonus = 0; // punti derivati dal bonus stella (moltiplicatore)
 		punteggioTotale = 0;
+		gamePaused = false;
 
 		function Start() {
 			scene = new THREE.Scene();
@@ -195,6 +174,10 @@
 							muoviDx = true;
 						}
 						break;
+					// se premo P
+					case 80:
+						gamePaused = !gamePaused;
+						break;
 				}
 			};
 
@@ -241,59 +224,85 @@
 			} );				
 			
 		}  // Start()
+		
+		function animaGameOver(){
+			// FERMO LA CANZONE
+			if(audioMacchina.isPlaying){
+				audioMacchina.pause();
+			}
+			// RIPRODUCO IL SUONO DI GAMEOVER se non ancora eseguito
+			if(!suonoGameOver){
+				audioGameOver.play();
+				suonoGameOver = true;
+			}
+			// FACCIO RUOTARE LA TELECAMERA ATTORNO ALLA MACCHINA E INSERISCO IL BOTTONE DI NUOVA PARTITA
+			rotateCamera();
+			controllaBottone();
+		}
+		
+		function animaNonGameOver(){
+			// FACCIO RIPARTIRE LA CANZONE (se necessario)
+			if(!audioMacchina.isPlaying){ // era in pausa
+				audioMacchina.play();
+			}
+			// ANIMO GLI EVENTUALI ASTEROIDI
+			controllaAsteroide();
+			// ANIMA MULINO
+			controllaMulino();
+			// VERIFICO CHE NON CI SIANO COLLISIONI
+			controllaCollisioni();
+			controllaCollisioniBonus();
+			aggiornaBonus();
+
+			// CALCOLO LO SPOSTAMENTO CHE DOVREBBE FARE LA MACCHINA
+			scegliSpostamentoMacchina(pivotMacchina.position.z);  // in base alla posizione della macchina...
+			pivotMacchina.position.z -= spostamentoMacchinaZ;  // imposto la sua velocità
+
+			// IN BASE AI TASTI PREMUTI VADO AVANTI (se non si verifica il gameOver)
+			if(muoviSx){
+				muoviMacchinaSx(pivotMacchina);
+			}
+			if(muoviDx){
+				muoviMacchinaDx(pivotMacchina);
+			}
+			// ALL'ARRIVO
+			if(pivotMacchina.position.z <= -10000){
+				rotateCamera();  // faccio ruotare la camera attorno alla macchina
+				controllaBottone();  // inserisco il bottone per iniziare una nuova partita
+				if(audioMacchina.isPlaying){
+					audioMacchina.pause();
+				}
+				if(!suonoVittoria){
+					audioVittoria.play();
+					suonoVittoria = true;
+				}
+			}
+		}
+		
+		function animaGamePaused(){
+			// FERMO LA CANZONE
+			if(audioMacchina.isPlaying){
+				audioMacchina.pause();
+			}
+		}
 
 		function animaScena(){
+		
 			stampaPunteggio();
 			aggiornaFuoco(arrFuoco);  // viene rimosso in caso di gameOver
 			aggiornaOmini();  // sia in caso di gameOver che non
 			aggiornaMeshPowerUp();  // sia in caso di gameOver che non
+			
 			if(!gameOver){
-				// ANIMO GLI EVENTUALI ASTEROIDI
-				controllaAsteroide();
-				// ANIMA MULINO
-				controllaMulino();
-				// VERIFICO CHE NON CI SIANO COLLISIONI
-				controllaCollisioni();
-				controllaCollisioniBonus();
-				aggiornaBonus();
-
-				// CALCOLO LO SPOSTAMENTO CHE DOVREBBE FARE LA MACCHINA
-				scegliSpostamentoMacchina(pivotMacchina.position.z);  // in base alla posizione della macchina...
-				pivotMacchina.position.z -= spostamentoMacchinaZ;  // imposto la sua velocità
-
-				// IN BASE AI TASTI PREMUTI VADO AVANTI (se non si verifica il gameOver)
-				if(muoviSx){
-					muoviMacchinaSx(pivotMacchina);
+				if(gamePaused){
+					animaGamePaused();
+				}else{
+					animaNonGameOver();
 				}
-				if(muoviDx){
-					muoviMacchinaDx(pivotMacchina);
-				}
-				// ALL'ARRIVO
-				if(pivotMacchina.position.z <= -10000){
-					rotateCamera();  // faccio ruotare la camera attorno alla macchina
-					controllaBottone();  // inserisco il bottone per iniziare una nuova partita
-					if(audioMacchina.isPlaying){
-						audioMacchina.pause();
-					}
-					if(!suonoVittoria){
-						audioVittoria.play();
-						suonoVittoria = true;
-					}
-				}
-			}else{  // gameOver
-				// FERMO LA CANZONE
-				if(audioMacchina.isPlaying){
-					audioMacchina.pause();
-				}
-				// RIPRODUCO IL SUONO DI GAMEOVER se non ancora eseguito
-				if(!suonoGameOver){
-					audioGameOver.play();
-					suonoGameOver = true;
-				}
-				// FACCIO RUOTARE LA TELECAMERA ATTORNO ALLA MACCHINA E INSERISCO IL BOTTONE DI NUOVA PARTITA
-				rotateCamera();
-				controllaBottone();
+			}else{ // gameOver
+				animaGameOver();
 			}
+			
 		}  // animaScena()
 
 		// UPDATE E CICLO DI RENDER
