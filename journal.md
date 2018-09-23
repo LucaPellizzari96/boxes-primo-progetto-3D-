@@ -132,7 +132,8 @@ Alcuni fix generali e update appunti
 * Rimosso shader per il bonus moltiplicatore (è un progetto con i cubi, era una sfera)
 * Inserita la possibilità di mettere in pausa la partita con il tasto P
 * Refactoring del codice per animare la scena (index.html)
-* 7 secondi di pausa prima che inizi la partita, in modo da poter vedere la scena e non iniziare subito
+* 6 secondi di pausa prima che inizi la partita, in modo da poter vedere la scena e non iniziare subito
+* Inserita scritta che mi dice che l'animazione è in pausa
 
 ### Sito delle Texture
 
