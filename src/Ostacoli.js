@@ -16,6 +16,9 @@
 			}  // for
 			// Aggiungo il cartello finale
 			aggiungiCartelloArrivo(4.5, -lunghezzaStrada);  // aggiungo in fondo il cartello di arrivo
+			// Creo l'elemento uccello
+			inserisciUccello();
+			oggettoUccello.aggiungi(0, -200);
 		}
 
 		function scegliLato(posizione){  // scelgo a caso se un oggetto deve stare a destra o a sinistra
@@ -305,4 +308,69 @@
 				}
 				aggiungiOmino(posizioneOminoX, posizioneOminoZ);
 			}
+		}
+		
+		function inserisciUccello(){
+			var geometriaCorpo = new THREE.BoxGeometry(2, 1, 1);
+			var geometriaTesta = new THREE.BoxGeometry(0.7, 0.7, 0.7);
+			var geometriaAla = new THREE.BoxGeometry(0.7, 0.2, 2);
+			var geometriaBecco = new THREE.BoxGeometry(0.5, 0.1, 0.4);
+			var pivotAlaA = new THREE.Object3D();
+			var pivotAlaB = new THREE.Object3D();
+			var uccello = new THREE.Object3D();
+
+			var materialeCorpo = new THREE.MeshPhongMaterial({color: 0xdddddd});
+			var materialeTesta = new THREE.MeshPhongMaterial({color: 0xbbbbbb});
+			var materialeBecco = new THREE.MeshPhongMaterial({color: 0xff8800});
+
+			var corpo = new THREE.Mesh(geometriaCorpo, materialeCorpo);
+			var testa = new THREE.Mesh(geometriaTesta, materialeTesta);
+			var alaA = new THREE.Mesh(geometriaAla, materialeCorpo);
+			var alaB = new THREE.Mesh(geometriaAla, materialeCorpo);
+			var becco = new THREE.Mesh(geometriaBecco, materialeBecco);
+
+			testa.position.set(1, 0.75, 0);
+			alaA.position.set(0, 0.2, -1);
+			alaB.position.set(0, 0.2, 1);
+			becco.position.set(1.6, 0.8, 0);
+
+			pivotAlaA.add(alaA);
+			pivotAlaB.add(alaB);
+			uccello.add(corpo);
+			uccello.add(testa);
+			uccello.add(becco);
+			uccello.add(pivotAlaA);
+			uccello.add(pivotAlaB);
+			
+			uccello.scale.multiplyScalar(0.5); // riduco le dimensioni dell'uccello
+
+			oggettoUccello = {
+				mesh:uccello,
+				pivotA:pivotAlaA,
+				pivotB:pivotAlaB,
+				visibile:false,
+				angoloAli:0,
+				velocita:0,
+			};
+
+			oggettoUccello.aggiungi = function(x, z){
+				this.centro = new THREE.Object3D();
+				this.mesh.position.z = -5;
+				this.centro.add(this.mesh);
+				scene.add(this.centro);
+				this.centro.position.set(x, 4, z);
+			};
+
+			oggettoUccello.animazioneAli = function(){
+				this.pivotA.rotation.x += 0.05*Math.cos(this.angoloAli*Math.PI/180);
+				this.pivotB.rotation.x -= 0.05*Math.cos(this.angoloAli*Math.PI/180);
+				this.angoloAli = this.angoloAli%360;
+				this.angoloAli += 5;
+			};
+
+			oggettoUccello.animazioneVolo = function(){
+				this.centro.rotateY(-0.02);
+				this.mesh.position.y += Math.sin(this.velocita) * 0.05;
+				this.velocita = this.velocita%360 + 0.05;
+			};
 		}

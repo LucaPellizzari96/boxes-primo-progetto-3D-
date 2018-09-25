@@ -120,6 +120,11 @@
 			controls.enableKeys = false;  // disabilito la tastiera, così posso giocare al minigioco senza spostare la camera quando premo le frecce
 			controls.addEventListener( 'change', Render );
 		}  // Start()
+		
+					function animaOggettoUccello(){
+				oggettoUccello.animazioneVolo();
+				oggettoUccello.animazioneAli();
+			}
 
 		// Luce Emisferica
 		function inserisciLuceEmisferica(){
@@ -132,8 +137,7 @@
 		function Update() {
 			requestAnimationFrame( Update );
 			controls.update();
-			oggettoUccello.animazioneAli();
-			oggettoUccello.animazioneVolo();
+			animaOggettoUccello();
 			stats.update();
 			Render();
 		}

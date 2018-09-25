@@ -6,12 +6,10 @@ Luca B:
 
 * Creare la struttura corretta per il cannone
 * Sistemare bordo superiore (html) che può coprire parti della scena
-* Inserire e animare piccione come "ostacolo" esterno
 
 Luca P:
 
 * Scudo attivo, macchina diventa trasparente (o dorata)
-* Possibilità di mettere in pausa la partita, tasto P
 * Aggiungere come ostacolo la pozzanghera che fa slittare la macchina fuori dalla scena (nuovo ostacolo, poco frequente)
 * Aggiungere pioggia dove ci sono le pozzanghere (sistema di particelle, come il fuoco dietro la macchina)
 * Partenza più "lenta": ad esempio tre pagine HTML: la prima dice "usa le frecce per muoverti" e mostra due frecce, la seconda elenca i power up e li mostra e la terza è il gioco. 

@@ -135,6 +135,11 @@ Alcuni fix generali e update appunti
 * 6 secondi di pausa prima che inizi la partita, in modo da poter vedere la scena e non iniziare subito
 * Inserita scritta che mi dice che l'animazione è in pausa
 
+### 25/09/2018
+
+* Refactoring
+* Inserita animazione per oggetto uccello
+
 ### Sito delle Texture
 
 http://www.wildtextures.com/category/free-textures/

@@ -91,6 +91,15 @@
 				  arrayOmini[i].lookAt(pivotMacchina.position);
 		     }
 		}
+		
+		// UCCELLO
+		function animaUccello(){
+			if(oggettoUccello.centro.position.z > pivotMacchina.position.z + 100){ // se ho superato il precedente uccello di un po (100 su z)
+				oggettoUccello.aggiungi(0, pivotMacchina.position.z - 100); // ne aggiungo un altro + avanti
+			}
+			oggettoUccello.animazioneVolo();
+			oggettoUccello.animazioneAli();
+		}
 
 		// POWERUP: aggiorna il movimento dei power up non ancora "presi" presenti sulla scena
 		function aggiornaMeshPowerUp(){
