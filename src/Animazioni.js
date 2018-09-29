@@ -95,7 +95,13 @@
 		// UCCELLO
 		function animaUccello(){
 			if(oggettoUccello.centro.position.z > pivotMacchina.position.z + 100){ // se ho superato il precedente uccello di un po (100 su z)
-				oggettoUccello.aggiungi(0, pivotMacchina.position.z - 100); // ne aggiungo un altro + avanti
+				var xPartenza;
+				if(randomConRange(0,100) > 50){
+					xPartenza = -30;
+				}else{
+					xPartenza = 30;
+				}
+				oggettoUccello.aggiungi(xPartenza, pivotMacchina.position.z - 150); // ne aggiungo un altro + avanti
 			}
 			oggettoUccello.animazioneVolo();
 			oggettoUccello.animazioneAli();
@@ -139,6 +145,7 @@
 			}
 		}
 
+		// TESTO
 		function stampaTestoFinale(){
 			if(gameOver){
 				var materialeTesto = new THREE.MeshPhongMaterial( {color: "red"} );

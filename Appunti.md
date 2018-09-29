@@ -12,8 +12,6 @@ Luca P:
 * Scudo attivo, macchina diventa trasparente (o dorata)
 * Aggiungere come ostacolo la pozzanghera che fa slittare la macchina fuori dalla scena (nuovo ostacolo, poco frequente)
 * Aggiungere pioggia dove ci sono le pozzanghere (sistema di particelle, come il fuoco dietro la macchina)
-* Partenza più "lenta": ad esempio tre pagine HTML: la prima dice "usa le frecce per muoverti" e mostra due frecce, la seconda elenca i power up e li mostra e la terza è il gioco. 
-Nella cartella test_temporanei abbiamo il file index.html che potrebbe essere la prima delle pagine descritte, da lì si passa a Istruzioni.html e poi a Gioco.html (rinominare l'attuale index.html in Gioco.html)
 * Vedere se ci sono altre cose da sistemare nei warnings
 
 Da decidere:

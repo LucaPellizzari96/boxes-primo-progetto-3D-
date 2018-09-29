@@ -1,0 +1,198 @@
+<html>
+	<head>
+		<title>Istruzioni di gioco 2</title>
+		<meta http-equiv="refresh" content="9;URL=Gioco.html">
+		<style>
+
+		body {
+			font-family: Monospace;
+			background-color: #71b2cf;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+
+		</style>
+
+		<script src="../lib/three.min.js"></script>
+		<script src="../lib/stats.min.js"></script>
+		<script src="../lib/Coordinates.js"></script>
+
+	</head>
+	<body>
+
+		<script>
+
+		// VARIABILI PER LA CREAZIONE DELLA SCENA
+		var scene, camera, renderer, controls, stats;
+		// VARIABILI PER LA ROTAZIONE DEGLI OSTACOLI
+		var masso, tronco, asteroide;
+		// VARIABILI PER LA ROTAZIONE DEI POWER UP
+		var stella, scudo, inversione;
+
+		function Start() {
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 400 );
+
+			renderer = new THREE.WebGLRenderer( {antialias: true} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x71b2cf );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.gammaInput = true;
+			renderer.gammaOutput = true;
+			renderer.shadowMap.enabled = true;
+			document.body.appendChild( renderer.domElement );
+
+			camera.position.set(0,0,12);
+			camera.lookAt( new THREE.Vector3(0,0,0));
+
+			// stats
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			document.body.appendChild( stats.domElement );	
+
+			// LUCE
+			inserisciLuceEmisferica();
+
+			// OSTACOLI
+			stampaTesto("Evita gli ostacoli", 2, 0.4, -10, 15, -15 );
+			inserisciMasso(-11,7,-10);
+			inserisciTronco(0, 7, -10);
+			inserisciAsteroide(11, 6.5, -10);
+			
+			// POWER UP
+			stampaTesto("Raccogli i Power Up", 2, 0.4, -12, -1, -15 );
+			
+			inserisciStella(-11, -5, -10);
+			stampaTesto("Moltiplicatore", 1.5, 0.3, -21, -11, -15 );
+			
+			inserisciScudo(0, -5, -10);
+			stampaTesto("Scudo", 1.5, 0.3, -3, -11, -15 );
+			
+			inserisciInversione(11, -5, -10);
+			stampaTesto("???", 2, 0.4, 11.5, -11, -15 );
+			
+			
+		}  // Start()
+		
+		function stampaTesto(testo, dimensione, altezza, x, y, z){
+			var fontLoader = new THREE.FontLoader();
+
+			fontLoader.load('../font/helvetiker_bold.typeface.json', function(font) {
+				var geometriaTesto = new THREE.TextGeometry(testo, {
+					font: font,
+					size: dimensione,
+					height: altezza,
+					curveSegments: 10
+				});
+
+				geometriaTesto.computeBoundingBox();
+				var materialeTesto = new THREE.MeshPhongMaterial( {color: "red"} );
+				var testoFinale = new THREE.Mesh(geometriaTesto, materialeTesto);
+				testoFinale.position.set(x, y, z);
+				scene.add(testoFinale);
+
+			});
+		}
+		
+		function inserisciLuceEmisferica(){
+			hemiLight = new THREE.HemisphereLight( 0xffffff, 0x0033ff, 0.8 );
+			hemiLight.color.setHSL( 0.6, 1, 0.6 );
+			hemiLight.position.set( 0, 500, 0 );
+			scene.add( hemiLight );
+		}
+		
+		function inserisciMasso(x, y, z){
+			var altezzaMasso = 2;
+			var geometriaMasso = new THREE.BoxGeometry(2,altezzaMasso,2);
+			var texture = new THREE.TextureLoader().load('../textures/masso.png');
+			var materialeMasso = new THREE.MeshPhongMaterial( { map: texture } );
+			masso = new THREE.Mesh(geometriaMasso, materialeMasso);
+			//masso.castShadow = true;
+			//masso.receiveShadow = true;
+			masso.position.set(x,y,z);
+			scene.add(masso);
+		}
+		
+		function inserisciTronco(x,y,z){
+			var geometriaTronco = new THREE.BoxGeometry(3,1,1);
+			var texture = new THREE.TextureLoader().load('../textures/tronco.png'); 
+			var materialeTronco = new THREE.MeshPhongMaterial( { map: texture } );
+			tronco = new THREE.Mesh(geometriaTronco, materialeTronco);
+			//tronco.castShadow = true;
+			//tronco.receiveShadow = true;
+			tronco.position.set(x,y,z);
+			scene.add(tronco);
+		}
+		
+		function inserisciAsteroide(x,y,z){
+			var geometriaAsteroide = new THREE.BoxGeometry(4,4,4);
+			var texture = new THREE.TextureLoader().load('../textures/asteroide.png'); 
+			var materialeAsteroide = new THREE.MeshPhongMaterial( { map: texture } );
+			asteroide = new THREE.Mesh(geometriaAsteroide, materialeAsteroide);
+			//asteroide.castShadow = true;
+			//asteroide.receiveShadow = true;
+			asteroide.position.set(x,y,z);
+			scene.add(asteroide);
+		}
+		
+		function inserisciStella(x,y,z){
+		  var geometriaStella = new THREE.BoxGeometry(2,2,2);
+		  var materialeStella = new THREE.MeshPhongMaterial({color:"yellow"});
+		  stella = new THREE.Mesh(geometriaStella, materialeStella);
+		  stella.position.set(x,y,z);
+		  scene.add(stella);
+		}
+		
+		function inserisciScudo(x,y,z){
+		  var geometriaScudo = new THREE.BoxGeometry(2,2,2);
+		  var materialeScudo = new THREE.MeshPhongMaterial({color: 0xff0000});
+		  scudo = new THREE.Mesh(geometriaScudo, materialeScudo);
+		  scudo.position.set(x, y, z);
+		  scene.add(scudo);
+		}
+		
+		function inserisciInversione(x,y,z){
+		  var geometriaInversione = new THREE.BoxGeometry(2,2,2);
+		  var materialeInversione = new THREE.MeshPhongMaterial({color: "blue"});
+		  inversione = new THREE.Mesh(geometriaInversione, materialeInversione);
+		  inversione.position.set(x, y, z);
+		  scene.add(inversione);
+		}
+
+		// UPDATE E CICLO DI RENDER
+
+		function Update() {
+			requestAnimationFrame( Update );
+			stats.update();
+			Render();
+		}
+
+		function Render() {
+		
+			masso.rotateY(0.01);
+			
+			tronco.rotateY(0.01);
+			
+			asteroide.rotateY(0.01);
+			
+			stella.rotateY(0.01);
+			
+			scudo.rotateY(0.01);
+			
+			inversione.rotateY(0.01);
+			
+			renderer.render(scene, camera);
+		}
+
+		Start();
+		Update();
+
+		</script>
+	</body>
+</html>

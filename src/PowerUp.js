@@ -10,7 +10,7 @@ function aggiungiPowerUp(){
   powerUpAttivi.push(0); // TEMP per indicare la presenza o meno dell'inversione dei comandi
   // aggiungo i power up alla macchina (ma finche non vengono "presi" non sono visibili)
   aggiungiCannoneMacchina(); // TODO da implementare
-  aggiungiScudoMacchina();
+  //aggiungiScudoMacchina();
   aggiungiIndicatoreMacchina();
   // inserisco i power up "a caso" sulla strada
   var distanzaPowerUp = 10000 / (numeroPowerUp+1);
@@ -114,7 +114,8 @@ function aggiungiBonus(tipoProssimoBonus){
       break;
     case "scudo":
       powerUpAttivi[2] = -pivotMacchina.position.z + 300;  // posizione in cui finira l'effetto del bonus
-      scudoBonus.visible = true;
+      //scudoBonus.visible = true;
+	  cambiaColoreMacchina();
       break;
     case "inversione":
       powerUpAttivi[3] = -pivotMacchina.position.z + 300;  // posizione in cui finira l'effetto del bonus
@@ -134,6 +135,7 @@ function aggiungiCannoneMacchina(){
   pivotMacchina.add(cannoneBonus);
 }
 
+/*
 function aggiungiScudoMacchina(){
   var geometriaScudo = new THREE.BoxGeometry(1, 1, 0.1); // TEMP per testare;
   var materialeScudo = new THREE.MeshPhongMaterial({color: 0x555555});
@@ -143,6 +145,7 @@ function aggiungiScudoMacchina(){
 
   pivotMacchina.add(scudoBonus);
 }
+*/
 
 function aggiungiIndicatoreMacchina(){
 	var fontLoader = new THREE.FontLoader();
@@ -178,11 +181,30 @@ function aggiornaBonus(){
   }
   // Controllo per il bonus scudo
   if(powerUpAttivi[2] <= -pivotMacchina.position.z || gameOver == true){ // effetto scaduto o game over
-    scudoBonus.visible = false;
+    //scudoBonus.visible = false;
+	ripristinaColoreMacchina();
   }
   // Controllo per il bonus inversioneComandi
   if((powerUpAttivi[3] <= -pivotMacchina.position.z || gameOver == true) && comandiInvertiti == true){
 	  comandiInvertiti = false;
 	  indicatore.visible = false;
+  }
+}
+
+function cambiaColoreMacchina(){
+  pivotMacchina.getObjectByName("Corpo macchina").material.color = new THREE.Color(0xffd700);
+  pivotMacchina.getObjectByName("Tetto macchina").material.color = new THREE.Color(0xffd700);
+  for(var k = 0; k < 4; k++){
+	var name = "Ruota " + k;
+	pivotMacchina.getObjectByName(name).material.color = new THREE.Color(0xffd700);
+  }
+}
+
+function ripristinaColoreMacchina(){
+  pivotMacchina.getObjectByName("Corpo macchina").material.color = coloreMacchina;
+  pivotMacchina.getObjectByName("Tetto macchina").material.color = coloreMacchina;
+  for(var k = 0; k < 4; k++){
+	var name = "Ruota " + k;
+	pivotMacchina.getObjectByName(name).material.color = new THREE.Color("black");
   }
 }

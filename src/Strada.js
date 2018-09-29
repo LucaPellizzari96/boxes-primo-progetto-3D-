@@ -43,7 +43,7 @@
 			for(var i = 0; i < lunghezzaStrada/(2*lunghezzaRiga); i++){
 				var riga = new THREE.Mesh(geometriaMezzeria, materialeMezzeria);
 				riga.position.set(0, yStrada + altezzaStrada/2 + altezzaRiga/2 + 0.05, zPrimaRiga);  // le righe sono a 0.05 dalla strada (quindi a 0.05 anche dalle ruote)
-				riga.castShadow = true;
+				//riga.castShadow = true;
 				riga.receiveShadow = true;
 				scene.add(riga);
 				zPrimaRiga -= (2*lunghezzaRiga);
@@ -102,9 +102,9 @@
 			erbaDestra.position.set(xErbaDestra, yStrada, -(lunghezzaStrada/2));
 			erbaSinistra.position.set(-xErbaDestra, yStrada, -(lunghezzaStrada/2));
 
-			erbaDestra.castShadow = true;
+			//erbaDestra.castShadow = true;
 			erbaDestra.receiveShadow = true;
-			erbaSinistra.castShadow = true;
+			//erbaSinistra.castShadow = true;
 			erbaSinistra.receiveShadow = true;
 			scene.add(erbaDestra);
 			scene.add(erbaSinistra);

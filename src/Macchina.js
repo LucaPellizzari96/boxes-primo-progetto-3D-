@@ -3,7 +3,7 @@
 			var altezzaMacchina = 1;
 			var lunghezzaMacchina = 3;
 			var geometriaMacchina = new THREE.BoxGeometry(1,altezzaMacchina,lunghezzaMacchina);
-			var coloreMacchina = new THREE.Color(Math.random() * 0xffffff);  // scelgo un colore a caso
+			//var coloreMacchina = new THREE.Color(Math.random() * 0xffffff);
 			var materialeMacchina = new THREE.MeshPhongMaterial( { color: coloreMacchina } );
 			var macchina = new THREE.Mesh( geometriaMacchina, materialeMacchina );
 
@@ -31,6 +31,7 @@
 
 			macchina.castShadow = true;
 			macchina.receiveShadow = true;
+			macchina.name = "Corpo macchina"; // TODO
 			pivotMacchina.add(macchina);
 			inserisciTetto(geometriaMacchina, materialeMacchina);
 			inserisciFanali();
@@ -50,6 +51,7 @@
 			tetto.receiveShadow = true;
 			tetto.castShadow = true;
 			tetto.position.set(0, yTetto, 0);
+			tetto.name = "Tetto macchina";
 			pivotMacchina.add(tetto);
 			inserisciFinestrino(geometriaTetto, yTetto);
 		}
@@ -83,6 +85,7 @@
 				ruota.receiveShadow = true;
 				ruota.castShadow = true;
 				ruota.position.set(vertici[j].x.x, vertici[j].x.y - dimensioneRuota/2, vertici[j].x.z);
+				ruota.name = "Ruota " + j;
 				pivotMacchina.add(ruota);
 			}
 		}

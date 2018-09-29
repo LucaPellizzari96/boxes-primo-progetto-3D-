@@ -18,7 +18,13 @@
 			aggiungiCartelloArrivo(4.5, -lunghezzaStrada);  // aggiungo in fondo il cartello di arrivo
 			// Creo l'elemento uccello
 			inserisciUccello();
-			oggettoUccello.aggiungi(0, -200);
+			var xPartenza;
+			if(randomConRange(0,100) > 50){
+				xPartenza = -30;
+			}else{
+				xPartenza = 30;
+			}
+			oggettoUccello.aggiungi(xPartenza, -200);
 		}
 
 		function scegliLato(posizione){  // scelgo a caso se un oggetto deve stare a destra o a sinistra
@@ -351,14 +357,17 @@
 				visibile:false,
 				angoloAli:0,
 				velocita:0,
+				posizioneInizialeX:0, 
 			};
 
 			oggettoUccello.aggiungi = function(x, z){
+				this.posizioneInizialeX = x;
 				this.centro = new THREE.Object3D();
 				this.mesh.position.z = -5;
 				this.centro.add(this.mesh);
 				scene.add(this.centro);
 				this.centro.position.set(x, 4, z);
+				if(x > 0) this.centro.rotateY(deg(180)); // se si trova a dx devo ruotare il corpo in modo che guardi verso sx
 			};
 
 			oggettoUccello.animazioneAli = function(){
@@ -369,7 +378,12 @@
 			};
 
 			oggettoUccello.animazioneVolo = function(){
-				this.centro.rotateY(-0.02);
+				//this.centro.rotateY(-0.02);
+				if(this.posizioneInizialeX > 0){ // parto da dx
+					this.centro.position.x -= 0.1 + 0.1*spostamentoMacchinaZ; // vado verso sx
+				}else{ // parto da sx
+					this.centro.position.x += 0.1 + 0.1*spostamentoMacchinaZ; // vado verso dx
+				}
 				this.mesh.position.y += Math.sin(this.velocita) * 0.05;
 				this.velocita = this.velocita%360 + 0.05;
 			};

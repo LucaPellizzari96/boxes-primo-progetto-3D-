@@ -140,6 +140,14 @@ Alcuni fix generali e update appunti
 * Refactoring
 * Inserita animazione per oggetto uccello
 
+### 29/09/2018
+
+* Rimosso attributo castShadow dalla strada e dall'erba (non ha senso che facciano ombra, non c'è niente sotto di loro)
+* Inserita descrizione iniziale del gioco tramite l'utilizzo di due pagine HTML che mostrano gli ostacoli e i Power Up e dicono quali tasti utilizzare per muoversi
+* Migliorata animazione per l'oggetto uccello
+* La macchina diventa dorata quando prendo il bonus scudo, commentata la precedente rappresentazione dello scudo nel file PowerUp.js
+* Aggiunti nomi agli oggetti Corpo macchina, Tetto macchina e ruote per poter accedere al loro colore e modificarlo durante la partita
+
 ### Sito delle Texture
 
 http://www.wildtextures.com/category/free-textures/

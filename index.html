@@ -1,6 +1,7 @@
 <html>
 	<head>
-		<title>Progetto 3D 2018 - with lights and textures</title>
+		<title>Istruzioni di gioco 1</title>
+		<meta http-equiv="refresh" content="8;URL=src/Istruzioni.html">
 		<style>
 
 		body {
@@ -15,107 +16,23 @@
 			height: 100%;
 		}
 
-		.right {
-			position: absolute;
-			right: 0px;
-			width: 80px;
-		}
-		
-		.center{
-			position: absolute;
-			width: 100%;
-			bottom: 80%;
-			text-align: center;
-			color: red;
-			font-size: 24;
-			display: none;
-		}
+		</style>
 
-	</style>
+		<script src="lib/three.min.js"></script>
+		<script src="lib/stats.min.js"></script>
+		<script src="lib/Coordinates.js"></script>
 
-		<script src="../lib/three.min.js"></script>
-		<script src="../lib/stats.min.js"></script>
-		<script src="../lib/Coordinates.js"></script>
-		<script src="../lib/OrbitControls.js"></script>
-
-		<script src="src/Macchina.js"></script>
-		<script src="src/Strada.js"></script>
-		<script src="src/Ausiliarie.js"></script>
-		<script src="src/Ostacoli.js"></script>
-		<script src="src/MovimentoMacchina.js"></script>
-		<script src="src/Collisioni.js"></script>
-		<script src="src/Animazioni.js"></script>
-		<script src="src/PowerUp.js"></script>
 	</head>
 	<body>
-		<div class="right", id="punteggio" > </div>
-		
-		<div class="center", id="pausa" > IN PAUSA </div>
 
-		<div class="contenitore" id="contenitoreBottone" >
-			<button id="bottone" onclick="nuovaPartita()" >Nuova partita</button>
-		</div>										   
-		
-		<!-- scena THREE.JS -->
-		
 		<script>
-
-		document.getElementById("contenitoreBottone").style.display = "none";  // elimino/nascondo l'elemento (bottone di fine partita) dalla scena
 
 		// VARIABILI PER LA CREAZIONE DELLA SCENA
 		var scene, camera, renderer, controls, stats;
-		var pivotMacchina;  // pivot che contiene la macchina e la camera, così si muovono insieme
-		var yFineRuote;  // punto sull'asse y in cui iniziano le ruote
-		var lunghezzaStrada = 10000;
-
-		// VARIABILI PER LE ANIMAZIONI
-		var asteroidi = new Array();
-		var contatoreAsteroide = 0;
-		var numAsteroide = 0;
-		var velocitaDiscesa = 0;
-		var mulini = new Array();
-		var posizioneZMulini = new Array();
-		var contatoreMulini = 0;
-		var numMulini = 0;
-		var suonoGameOver = false;  // mi dice che non e' ancora iniziato il suono di gameover
-		var suonoVittoria = false; // stessa cosa in caso di vittoria
-
-		// VARIABILI PER IL MOVIMENTO DELLA MACCHINA
-		var xDestra, xSinistra;  // possibili valori della posizione x della macchina durante la partita (sulla strada)
-		var muoviDx, muoviSx;  // variabili booleane che servono per il movimento della macchina a destra e a sinistra
-		var spostamentoMacchinaZ = 0.5;  // quanto velocemente avanza la macchina verso -z
-		var spostamentoMacchinaX = 0.05;  // quanto la macchina si sposta su x alla pressione dei tasti direzionali
-		var fasciaPosizioneMacchina = 0;  // quanto lontano si trova la macchina dall'origine
-		var offsetMacchinaZ = 1.75;  // distanza fra centro della macchina e fine delle ruote (su z)
-		var offsetMacchinaX = 0.75;  // distanza fra centro della macchina e fine della fiancata (su x)
-
-		// VARIABILI CHE SERVONO PER LE COLLISIONI
-		gameOver = false; //Quando un ostacolo viene colpito, questa variabile diventa true e il gioco ha termine
-		spazioFraOstacoli = 50;
-		numeroOstacoli = (lunghezzaStrada/spazioFraOstacoli) -2;  // -2 perchè in posizione 0 e in fondo alla pista non metto ostacoli
-		posizioneOstacoli = new Array(); // Array per la gestione delle collisioni, ostacoli[i] = 1 (Destra), -1(Sinistra)
-		tipoOstacoli = new Array(); //Array per la gestione delle collisione, indica solo il tipo di ostacolo con le stringhe (es. "asteroide")
-		var rimuoviOstacolo = -1;  // variabile che mi dice quale ostacolo va rimosso (dopo la collisione se la macchina aveva lo scudo)
-
-		// VARIABILI PER I POWER UP
-		numeroPowerUp = 49; //Sono presenti 49 powerUp in pista, uno ogni 4 ostacoli;
-		angoloOscillazioneVerticale = 0;
-		comandiInvertiti = false;
-
-		// VARIABILI AUSILIARIE
-		var rotazioneAttuale = 0;
-		var bottoneInserito = false;
-		punteggio = 0;  // variabile per tenere conto dei punti in base alla distanza percorsa
-		punteggioBonus = 0; // punti derivati dal bonus stella (moltiplicatore)
-		punteggioTotale = 0;
-		gamePaused = false; // mi dice se il gioco e in pausa o meno
-		gameStarted = false; // aspetto che la scena sia stata caricata prima di far partire la macchina
-		startingTime = Date.now() + 6000; // 6000 ms = 6 secondi
 
 		function Start() {
 			scene = new THREE.Scene();
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 400 );
-			pivotMacchina = new THREE.Object3D();
 
 			renderer = new THREE.WebGLRenderer( {antialias: true} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -126,226 +43,66 @@
 			renderer.shadowMap.enabled = true;
 			document.body.appendChild( renderer.domElement );
 
-			camera.position.set(0,4,12);
+			camera.position.set(0,0,12);
 			camera.lookAt( new THREE.Vector3(0,0,0));
-			pivotCamera = new THREE.Object3D();
-			pivotCamera.add(camera);
-
-			yFineRuote = inserisciMacchina();
-			pivotMacchina.add(pivotCamera);
-			scene.add(pivotMacchina);
-			scene.fog = new THREE.Fog( 0x71b2cf, 0.1, 400 );
-
-			inserisciStrada();  // inserisco strada...
-			inserisciOstacoli(lunghezzaStrada);  // con gli ostacoli
-			inserisciLuceEmisferica();
-			
-			arrayOmini = new Array();
-			arrayVelOmini = new Array();
-			inserisciOmini();
-			inserisciOminiStart();
-			inserisciOminiEnd();
-
-			pivotMacchina.position.x = scegliLato("interno");  // posiziono la macchina su uno dei due lati (a caso)
-			pivotMacchina.position.z = -(3 + 0.5)/2;  // posiziono la macchina all'inizio della strada (lunghezza macchina + lunghezza ruote)/2
 
 			// stats
 			stats = new Stats();
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
-			document.body.appendChild( stats.domElement );
-
-			// Aggiungo i controlli
-			controls = new THREE.OrbitControls( camera );
-			controls.enableKeys = false;  // disabilito la tastiera, così posso giocare al minigioco senza spostare la camera quando premo le frecce
-			controls.addEventListener( 'change', Render );
-
-
-			/* Script per la pressione delle chiavi, sono state usate solo le chiavi
-			*  dei tasti dirazionali laterali (Destra, Sinistra, A, D);
-			*/
-			var onKeyDown = function ( event ) {
-				switch ( event.keyCode ) {
-					// se premo A oppure la freccia sinistra
-					case 37: // left
-					case 65: // A
-						if(!gamePaused){
-							if(comandiInvertiti == true){
-								muoviDx = true;
-								muoviSx = false;
-							}else{
-								muoviDx = false;
-								muoviSx = true;					
-							}
-						}
-						break;
-					// se premo D oppure la freccia destra
-					case 39: // right
-					case 68: // D
-						if(!gamePaused){
-							if(comandiInvertiti == true){
-								muoviSx = true;
-								muoviDx = false;
-							}else{
-								muoviSx = false;
-								muoviDx = true;
-							}
-						}
-						break;
-					// se premo P
-					case 80:
-						gamePaused = !gamePaused;
-						if(gamePaused) document.getElementById("pausa").style.display = "inline";
-						if(!gamePaused) document.getElementById("pausa").style.display = "none";
-						break;
-				}
-			};
-
-			document.addEventListener( 'keydown', onKeyDown);
-
-			muoviSx = false;  // inizialmente tutti a false
-			muoviDx = false;
-
-			// Aggiungo i powerup in scena
-			aggiungiPowerUp();
+			document.body.appendChild( stats.domElement );	
 			
-			// audio
-			var audioLoaderMacchina = new THREE.AudioLoader();
-			var audioLoaderGameOver = new THREE.AudioLoader();
-			var audioLoaderPowerUp = new THREE.AudioLoader();
-			var audioLoaderVittoria = new THREE.AudioLoader();
-			var listener = new THREE.AudioListener();
-			camera.add(listener);
+			inserisciLuceEmisferica();
 
-			audioLoaderMacchina.load( '../sounds/BackgroundMusic.mp3', function ( buffer ) {
-					audioMacchina = new THREE.PositionalAudio( listener );
-					audioMacchina.setBuffer( buffer );
-					audioMacchina.setLoop(true);
-					//audioMacchina.play(); // non lo faccio partire subito
-					pivotMacchina.add( audioMacchina );
-			} );
+			// TESTO
+			stampaTesto("Usa le frecce per muoverti", 2, 0.4, -17, 11, -15 );
+			// Sinistra
+			stampaTesto("<--", 3, 0.5, -29, 1, -15 );
+			stampaTesto("(tasto A)", 2, 0.4, -30, -2, -15 );
+			// Destra
+			stampaTesto("-->", 3, 0.5, 25, 1, -15 );
+			stampaTesto("(tasto D)", 2, 0.4, 21, -2, -15 );
 			
-			audioLoaderGameOver.load( '../sounds/gameover.mp3', function ( buffer ) {
-					audioGameOver = new THREE.PositionalAudio( listener );
-					audioGameOver.setBuffer( buffer );
-					pivotCamera.add( audioGameOver );
-			} );
-			
-			audioLoaderPowerUp.load( '../sounds/powerup.mp3', function ( buffer ) {
-					audioPowerUp = new THREE.PositionalAudio( listener );
-					audioPowerUp.setBuffer( buffer );
-					pivotMacchina.add( audioPowerUp );
-			} );		
-
-			audioLoaderVittoria.load( '../sounds/applause.mp3', function ( buffer ) {
-					audioVittoria = new THREE.PositionalAudio( listener );
-					audioVittoria.setBuffer( buffer );
-					pivotMacchina.add( audioVittoria );
-			} );				
+			stampaTesto("Metti in pausa la partita con il tasto P", 2, 0.4, -23, -13, -15 );
 			
 		}  // Start()
 		
-		function animaGameOver(){
-			// FERMO LA CANZONE
-			if(audioMacchina.isPlaying){
-				audioMacchina.pause();
-			}
-			// RIPRODUCO IL SUONO DI GAMEOVER se non ancora eseguito
-			if(!suonoGameOver){
-				audioGameOver.play();
-				suonoGameOver = true;
-			}
-			// FACCIO RUOTARE LA TELECAMERA ATTORNO ALLA MACCHINA E INSERISCO IL BOTTONE DI NUOVA PARTITA
-			rotateCamera();
-			controllaBottone();
+		function stampaTesto(testo, dimensione, altezza, x, y, z){
+			var fontLoader = new THREE.FontLoader();
+
+			fontLoader.load('font/helvetiker_bold.typeface.json', function(font) {
+				var geometriaTesto = new THREE.TextGeometry(testo, {
+					font: font,
+					size: dimensione,
+					height: altezza,
+					curveSegments: 10
+				});
+
+				geometriaTesto.computeBoundingBox();
+				var materialeTesto = new THREE.MeshPhongMaterial( {color: "red"} );
+				var testoFinale = new THREE.Mesh(geometriaTesto, materialeTesto);
+				testoFinale.position.set(x, y, z);
+				scene.add(testoFinale);
+
+			});
 		}
 		
-		function animaNonGameOver(){
-			// FACCIO RIPARTIRE LA CANZONE (se necessario)
-			if(!audioMacchina.isPlaying){ // era in pausa
-				audioMacchina.play();
-			}
-			// ANIMO GLI EVENTUALI ASTEROIDI
-			controllaAsteroide();
-			// ANIMA MULINO
-			controllaMulino();
-			// ANIMA UCCELLO
-			animaUccello();
-			// VERIFICO CHE NON CI SIANO COLLISIONI
-			controllaCollisioni();
-			controllaCollisioniBonus();
-			aggiornaBonus();
-
-			// CALCOLO LO SPOSTAMENTO CHE DOVREBBE FARE LA MACCHINA
-			scegliSpostamentoMacchina(pivotMacchina.position.z);  // in base alla posizione della macchina...
-			pivotMacchina.position.z -= spostamentoMacchinaZ;  // imposto la sua velocità
-
-			// IN BASE AI TASTI PREMUTI VADO AVANTI (se non si verifica il gameOver)
-			if(muoviSx){
-				muoviMacchinaSx(pivotMacchina);
-			}
-			if(muoviDx){
-				muoviMacchinaDx(pivotMacchina);
-			}
-			// ALL'ARRIVO
-			if(pivotMacchina.position.z <= -10000){
-				rotateCamera();  // faccio ruotare la camera attorno alla macchina
-				controllaBottone();  // inserisco il bottone per iniziare una nuova partita
-				if(audioMacchina.isPlaying){
-					audioMacchina.pause();
-				}
-				if(!suonoVittoria){
-					audioVittoria.play();
-					suonoVittoria = true;
-				}
-			}
+		function inserisciLuceEmisferica(){
+			hemiLight = new THREE.HemisphereLight( 0xffffff, 0x0033ff, 0.8 );
+			hemiLight.color.setHSL( 0.6, 1, 0.6 );
+			hemiLight.position.set( 0, 500, 0 );
+			scene.add( hemiLight );
 		}
-		
-		function animaGamePaused(){
-			// FERMO LA CANZONE
-			if(audioMacchina.isPlaying){
-				audioMacchina.pause();
-			}
-		}
-
-		function animaScena(){
-			if(gameStarted){
-				stampaPunteggio();
-				if(asseFuoco.visible == false) asseFuoco.visible = true;
-				aggiornaFuoco(arrFuoco);  // viene rimosso in caso di gameOver
-			}
-			aggiornaOmini();  // sia in caso di gameOver che non
-			aggiornaMeshPowerUp();  // sia in caso di gameOver che non
-			
-			if(!gameOver){
-				if(gamePaused){
-					animaGamePaused();
-				}else if(gameStarted){
-					animaNonGameOver();
-				} // se non e' ancora iniziato if(!gameStarted) non fa niente
-			}else{ // gameOver
-				animaGameOver();
-			}
-			
-		}  // animaScena()
 
 		// UPDATE E CICLO DI RENDER
 
 		function Update() {
 			requestAnimationFrame( Update );
-			controls.update();
 			stats.update();
 			Render();
 		}
 
 		function Render() {
-		
-			if(!gameStarted && Date.now() > startingTime){
-				gameStarted = true;
-			}
-			
-			animaScena();
-			
 			renderer.render(scene, camera);
 		}
 
