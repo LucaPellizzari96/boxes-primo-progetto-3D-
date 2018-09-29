@@ -9,7 +9,7 @@ Luca B:
 
 Luca P:
 
-* Scudo attivo, macchina diventa trasparente (o dorata)
+* Rimuovere la possibilità che uno dei primi 2-3 ostacoli sia un asteroide
 * Aggiungere come ostacolo la pozzanghera che fa slittare la macchina fuori dalla scena (nuovo ostacolo, poco frequente)
 * Aggiungere pioggia dove ci sono le pozzanghere (sistema di particelle, come il fuoco dietro la macchina)
 * Vedere se ci sono altre cose da sistemare nei warnings
