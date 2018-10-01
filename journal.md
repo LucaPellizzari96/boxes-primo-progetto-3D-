@@ -1,6 +1,6 @@
 # Progetto Interactive 3D Graphics: Pellizzari Luca & Baradel Luca
 
-Anno accademico 2017/2018, primo progetto del corso.
+Primo progetto per il corso di Interactive 3D Graphics, anno accademico 2017/2018
 
 ## Idea Generale
 
@@ -54,7 +54,7 @@ Dove *offsetMacchina* serve a considerare come elemento di collisione la parte f
 Siccome nemmeno questo metodo ha dato buoni risultati, si è scelto di riorganizzare il tutto dall'inizio;
 Sono state create due procedure, *collisioneAsseX* e *collisioneAsseZ*, che verificano rispettivamente la collisione in uno dei due casi, questa procedura è effettuata due volte, una per la parte frontale della macchina e una per il retro.
 
-### Fuoco dalla vettura
+### 03/2018 Fuoco dalla vettura
 
 Aggiunta l'animazione del fuoco in un file a sé stante a scopo di test, a breve verrà implementata nel file del progetto principale.
 Il fuoco è stato generato esclusivamente con delle BoxGeometry che variano nel tempo per poi tornare al punto iniziale. (Variazione di colore, scala e posizione);
@@ -67,19 +67,19 @@ pivotMacchina.position.x += spostamentoMacchinaX*(xDestra*1.25 - pivotMacchina.p
 ```
 Dove *xDestra * 1,25* rappresenta un fattore di scala del movimento, mentre *pivotMacchina.position.x* rappresenta l'attuale posizione della macchina, in questo modo il valore dello spostamento varia dinamicamente a seconda della posizione attuale della macchina. (Nella procedura per lo spostamento nell'altro verso, *pivotMacchina.position.x* è sommato e non sottratto);
 
-### Aggiunta texture
+### 03/2018 Aggiunta texture
 
 * Aggiunte texture erba e asfalto;
 * Modificate alcune misure e data trasparenza alle particelle del fuoco;
 
-### Aggiunti nuovi elementi al progetto
+### 03/2018 Aggiunti nuovi elementi al progetto
 
 * Aggiunto un mulino con le pale che si muovono, verrà messo come ostacolo "esterno" quindi come decorazione della scena;
 * Aggiunto un omino che salta e muove le braccia, per il salto è stato usato il principio di fisica aggiungendo velocità e gravità;
 * Modificato il cielo e aggiunti i fari alla macchina e inserito il tasto di "Nuova Partita" in caso di vittoria o game over;
 * Aggiunti i testi di vittoria e sconfitta
 
-### Ultime modifiche al progetto e sistemazione del readme.md
+### 03/2018 Ultime modifiche al progetto e sistemazione del readme.md
 
 # Successivo alla consegna
 
@@ -147,6 +147,10 @@ Alcuni fix generali e update appunti
 * Migliorata animazione per l'oggetto uccello
 * La macchina diventa dorata quando prendo il bonus scudo, commentata la precedente rappresentazione dello scudo nel file PowerUp.js
 * Aggiunti nomi agli oggetti Corpo macchina, Tetto macchina e ruote per poter accedere al loro colore e modificarlo durante la partita
+
+### 01/10/2018
+
+Rimossa la possibilità che uno dei primi 4 ostacoli della partita sia un asteroide (altrimenti scende troppo veloce e lo vedo all'ultimo)
 
 ### Sito delle Texture
 

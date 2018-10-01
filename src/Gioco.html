@@ -78,14 +78,14 @@
 		var contatoreMulini = 0;
 		var numMulini = 0;
 		var suonoGameOver = false;  // mi dice che non e' ancora iniziato il suono di gameover
-		var suonoVittoria = false; // stessa cosa in caso di vittoria
+		var suonoVittoria = false; // mi dice che non e' ancora iniziato il suono di vittoria
 
 		// VARIABILI PER IL MOVIMENTO DELLA MACCHINA
 		var xDestra, xSinistra;  // possibili valori della posizione x della macchina durante la partita (sulla strada)
 		var muoviDx, muoviSx;  // variabili booleane che servono per il movimento della macchina a destra e a sinistra
 		var spostamentoMacchinaZ = 0.5;  // quanto velocemente avanza la macchina verso -z
 		var spostamentoMacchinaX = 0.05;  // quanto la macchina si sposta su x alla pressione dei tasti direzionali
-		var fasciaPosizioneMacchina = 0;  // quanto lontano si trova la macchina dall'origine
+		var fasciaPosizioneMacchina = 0;  // quanto lontano (sull'asse z) si trova la macchina dall'origine
 		var offsetMacchinaZ = 1.75;  // distanza fra centro della macchina e fine delle ruote (su z)
 		var offsetMacchinaX = 0.75;  // distanza fra centro della macchina e fine della fiancata (su x)
 
@@ -94,18 +94,18 @@
 		spazioFraOstacoli = 50;
 		numeroOstacoli = (lunghezzaStrada/spazioFraOstacoli) -2;  // -2 perchè in posizione 0 e in fondo alla pista non metto ostacoli
 		posizioneOstacoli = new Array(); // Array per la gestione delle collisioni, ostacoli[i] = 1 (Destra), -1(Sinistra)
-		tipoOstacoli = new Array(); //Array per la gestione delle collisione, indica solo il tipo di ostacolo con le stringhe (es. "asteroide")
-		var rimuoviOstacolo = -1;  // variabile che mi dice quale ostacolo va rimosso (dopo la collisione se la macchina aveva lo scudo)
+		tipoOstacoli = new Array(); // Array per la gestione delle collisione, indica solo il tipo di ostacolo con le stringhe (es. "asteroide")
+		var rimuoviOstacolo = -1;  // variabile che mi dice l'indice dell'ostacolo che va rimosso (dopo la collisione se la macchina aveva lo scudo)
 		var coloreMacchina = new THREE.Color(Math.random() * 0xffffff);  // scelgo un colore a caso
 
 		// VARIABILI PER I POWER UP
 		numeroPowerUp = 49; //Sono presenti 49 powerUp in pista, uno ogni 4 ostacoli;
 		angoloOscillazioneVerticale = 0;
-		comandiInvertiti = false;
+		comandiInvertiti = false; // mi dice se l'effetto del bonus inversione comandi e' attivo o meno
 
 		// VARIABILI AUSILIARIE
 		var rotazioneAttuale = 0;
-		var bottoneInserito = false;
+		var bottoneInserito = false; // bottone per effettuare una nuova partita (viene inserito in caso di game over)
 		punteggio = 0;  // variabile per tenere conto dei punti in base alla distanza percorsa
 		punteggioBonus = 0; // punti derivati dal bonus stella (moltiplicatore)
 		punteggioTotale = 0;
@@ -135,7 +135,7 @@
 			yFineRuote = inserisciMacchina();
 			pivotMacchina.add(pivotCamera);
 			scene.add(pivotMacchina);
-			scene.fog = new THREE.Fog( 0x71b2cf, 0.1, 400 );
+			scene.fog = new THREE.Fog( 0x71b2cf, 0.1, 400 ); // nebbia
 
 			inserisciStrada();  // inserisco strada...
 			inserisciOstacoli(lunghezzaStrada);  // con gli ostacoli
@@ -147,7 +147,7 @@
 			inserisciOminiStart();
 			inserisciOminiEnd();
 
-			pivotMacchina.position.x = scegliLato("interno");  // posiziono la macchina su uno dei due lati (a caso)
+			pivotMacchina.position.x = scegliLato("interno");  // posiziono la macchina su uno dei due lati, destra o sinistra (a caso)
 			pivotMacchina.position.z = -(3 + 0.5)/2;  // posiziono la macchina all'inizio della strada (lunghezza macchina + lunghezza ruote)/2
 
 			// stats
@@ -196,8 +196,8 @@
 					// se premo P
 					case 80:
 						gamePaused = !gamePaused;
-						if(gamePaused) document.getElementById("pausa").style.display = "inline";
-						if(!gamePaused) document.getElementById("pausa").style.display = "none";
+						if(gamePaused) document.getElementById("pausa").style.display = "inline"; // mostro la scritta pausa
+						if(!gamePaused) document.getElementById("pausa").style.display = "none"; // nascondo la scritta pausa
 						break;
 				}
 			};
@@ -210,13 +210,13 @@
 			// Aggiungo i powerup in scena
 			aggiungiPowerUp();
 			
-			// audio
+			// Audio
 			var audioLoaderMacchina = new THREE.AudioLoader();
 			var audioLoaderGameOver = new THREE.AudioLoader();
 			var audioLoaderPowerUp = new THREE.AudioLoader();
 			var audioLoaderVittoria = new THREE.AudioLoader();
 			var listener = new THREE.AudioListener();
-			camera.add(listener);
+			camera.add(listener); // si muove con la camera (che a sua volta si muove con la macchina)
 
 			audioLoaderMacchina.load( '../sounds/BackgroundMusic.mp3', function ( buffer ) {
 					audioMacchina = new THREE.PositionalAudio( listener );
@@ -246,6 +246,7 @@
 			
 		}  // Start()
 		
+		// Ad ogni frame in caso di game over
 		function animaGameOver(){
 			// FERMO LA CANZONE
 			if(audioMacchina.isPlaying){
@@ -261,6 +262,7 @@
 			controllaBottone();
 		}
 		
+		// Ad ogni frame in caso di non game over
 		function animaNonGameOver(){
 			// FACCIO RIPARTIRE LA CANZONE (se necessario)
 			if(!audioMacchina.isPlaying){ // era in pausa
@@ -302,6 +304,7 @@
 			}
 		}
 		
+		// Ad ogni frame se il gioco e' in pausa
 		function animaGamePaused(){
 			// FERMO LA CANZONE
 			if(audioMacchina.isPlaying){
@@ -310,10 +313,10 @@
 		}
 
 		function animaScena(){
-			if(gameStarted){
+			if(gameStarted){ // se la partita e' iniziata
 				stampaPunteggio();
-				if(asseFuoco.visible == false) asseFuoco.visible = true;
-				aggiornaFuoco(arrFuoco);  // viene rimosso in caso di gameOver
+				if(asseFuoco.visible == false) asseFuoco.visible = true; // mostro il fuoco dietro la macchina
+				aggiornaFuoco(arrFuoco);  // animo il fuoco, viene rimosso in caso di gameOver
 			}
 			aggiornaOmini();  // sia in caso di gameOver che non
 			aggiornaMeshPowerUp();  // sia in caso di gameOver che non
@@ -323,7 +326,7 @@
 					animaGamePaused();
 				}else if(gameStarted){
 					animaNonGameOver();
-				} // se non e' ancora iniziato if(!gameStarted) non fa niente
+				} // se non e' ancora iniziato !gameStarted non faccio niente
 			}else{ // gameOver
 				animaGameOver();
 			}
@@ -341,7 +344,7 @@
 
 		function Render() {
 		
-			if(!gameStarted && Date.now() > startingTime){
+			if(!gameStarted && Date.now() > startingTime){ // aspetto 6 secondi poi setto gameStarted a true
 				gameStarted = true;
 			}
 			

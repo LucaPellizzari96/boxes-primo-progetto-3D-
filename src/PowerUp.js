@@ -4,13 +4,13 @@ function aggiungiPowerUp(){
   powerUpAttivi = new Array();
   powerUpInScena = new Array();
   powerUpInScenaTipo = new Array();
-  powerUpAttivi.push(0); // TEMP per indicare la z dove terminera'
-  powerUpAttivi.push(0); // TEMP per indicare i colpi di cannone restanti
-  powerUpAttivi.push(0); // TEMP per indicare la z dove terminera'
-  powerUpAttivi.push(0); // TEMP per indicare la presenza o meno dell'inversione dei comandi
+  powerUpAttivi.push(0); // per indicare la z dove terminera'
+  powerUpAttivi.push(0); // per indicare i colpi di cannone restanti
+  powerUpAttivi.push(0); // per indicare la z dove terminera'
+  powerUpAttivi.push(0); // per indicare la presenza o meno dell'inversione dei comandi
   // aggiungo i power up alla macchina (ma finche non vengono "presi" non sono visibili)
   aggiungiCannoneMacchina(); // TODO da implementare
-  //aggiungiScudoMacchina();
+  //aggiungiScudoMacchina(); // non c'e' + la rappresentazione dello scudo come oggetto sulla macchina
   aggiungiIndicatoreMacchina();
   // inserisco i power up "a caso" sulla strada
   var distanzaPowerUp = 10000 / (numeroPowerUp+1);
@@ -191,6 +191,7 @@ function aggiornaBonus(){
   }
 }
 
+// Quando prendo lo scudo (cubo rosso) la macchina diventa dorata con questa funzione
 function cambiaColoreMacchina(){
   pivotMacchina.getObjectByName("Corpo macchina").material.color = new THREE.Color(0xffd700);
   pivotMacchina.getObjectByName("Tetto macchina").material.color = new THREE.Color(0xffd700);
@@ -200,6 +201,7 @@ function cambiaColoreMacchina(){
   }
 }
 
+// Quando perdo lo scudo il colore della macchina ritorna quello di partenza
 function ripristinaColoreMacchina(){
   pivotMacchina.getObjectByName("Corpo macchina").material.color = coloreMacchina;
   pivotMacchina.getObjectByName("Tetto macchina").material.color = coloreMacchina;

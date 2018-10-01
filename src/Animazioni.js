@@ -2,16 +2,16 @@
 		function aggiornaFuoco(arrFuoco){
 			for(var i = 0; i < arrFuoco.length; i++){
 				if(arrFuoco[i].position.y < 3 && !gameOver){
-					arrFuoco[i].position.y += 0.06; //Sposta il cubo su y rispetto a asseFuoco;
-					arrFuoco[i].position.x *= 0.97; //Fa convergere il flusso vero il centro di asseFuoco;
+					arrFuoco[i].position.y += 0.06; // Sposta il cubo su y rispetto a asseFuoco;
+					arrFuoco[i].position.x *= 0.97; // Fa convergere il flusso vero il centro di asseFuoco;
 					arrFuoco[i].scale.x = arrFuoco[i].scale.x*0.95; //Scala il cubo su x, y e z dello stesso fattore;
 					arrFuoco[i].scale.y = arrFuoco[i].scale.y*0.95;
 					arrFuoco[i].scale.z = arrFuoco[i].scale.z*0.95;
-					arrFuoco[i].material.color.g += 0.06; //Varia il colore in modo che passi da rosso a giallo;
+					arrFuoco[i].material.color.g += 0.06; // Varia il colore in modo che passi da rosso a giallo;
 					arrFuoco[i].material.opacity -= 0.03;
 				}else{
 					if(!gameOver && pivotMacchina.position.z > -10000){
-						arrFuoco[i].position.x = Math.random() - 0.5; //Scelgo una nuova posizione su X casuale per il cubo;
+						arrFuoco[i].position.x = Math.random() - 0.5; // Scelgo una nuova posizione su X casuale per il cubo;
 						// Queste procedure resettano i cubetti allo stato iniziale;
 						arrFuoco[i].position.y = 0;
 						arrFuoco[i].scale.x = 1;
@@ -96,10 +96,10 @@
 		function animaUccello(){
 			if(oggettoUccello.centro.position.z > pivotMacchina.position.z + 100){ // se ho superato il precedente uccello di un po (100 su z)
 				var xPartenza;
-				if(randomConRange(0,100) > 50){
-					xPartenza = -30;
-				}else{
-					xPartenza = 30;
+				if(randomConRange(0,100) > 50){ // 50%
+					xPartenza = -30; // lato sinistro della strada
+				}else{ // 50%
+					xPartenza = 30; // lato destro della strada
 				}
 				oggettoUccello.aggiungi(xPartenza, pivotMacchina.position.z - 150); // ne aggiungo un altro + avanti
 			}

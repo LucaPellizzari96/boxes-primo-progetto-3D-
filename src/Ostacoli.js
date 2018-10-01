@@ -1,5 +1,5 @@
 		function inserisciOstacoli(lunghezzaStrada){
-		// Inserisco gli ostacoli sulla strada
+			// Inserisco gli ostacoli sulla strada
 			for(var i = 1; i <= numeroOstacoli; i++){  // aggiungo un certo numero di ostacoli scelti a caso
 				var z = -(i * (spazioFraOstacoli));
 				var x = scegliLato("interno");
@@ -45,7 +45,7 @@
 		}
 
 		function aggiungiOstacolo(posizione, x, z){
-			var tipoOstacolo = scegliOstacolo(posizione);
+			var tipoOstacolo = scegliOstacolo(posizione,z);
 			switch(tipoOstacolo){
 				case "tronco":
 					aggiungiTronco(x,z);
@@ -68,9 +68,15 @@
 			}
 		}
 
-		function scegliOstacolo(posizione){  // scelgo a caso un oggetto fra i possibili ostacoli
+		// Scelgo a caso un oggetto fra i possibili ostacoli (dipende se interno o esterno)
+		function scegliOstacolo(posizione,z){  
 			if(posizione == "interno"){  // ostacoli sulla strada
-				var random = randomConRange(1,100);
+				var random = 0;
+				if(z >= -200){ // primi 4 ostacoli
+					random = randomConRange(1,90); // no asteroide (altrimenti mi cade addosso veloce)
+				}else{ // dopo il quarto ostacolo
+					random = randomConRange(1,100); // va bene anche l'asteroide
+				}
 				if(random <= 45){  // 45% tronco
 					return "tronco";
 				}else if(random > 45 && random <= 90) {  // 45% masso

@@ -6,8 +6,8 @@ function controllaCollisioni(){
 	// controllo con il prossimo ostacolo, ovvero con il primo ostacolo che si trova + avanti della macchina
 	var i = Math.floor(-pivotMacchina.position.z/50);
 	var posOstacoloZ = (50*(i+1));
-	var distanzaZ = calcolaDistanzaZ(i); // Meta' della "lunghezza" dell'ostacolo
-	var distanzaX = calcolaDistanzaX(i); // Meta' della "larghezza" dell'ostacolo
+	var distanzaZ = calcolaDistanzaZ(i); // Meta' della "lunghezza" dell'ostacolo (dipende dal tipo dell'ostacolo)
+	var distanzaX = calcolaDistanzaX(i); // Meta' della "larghezza" dell'ostacolo (dipende dal tipo dell'ostacolo)
 	if(collisioneAsseZ("avanti", posOstacoloZ, offsetMacchinaZ, distanzaZ) && collisioneAsseX(i, offsetMacchinaX, distanzaX) && i != rimuoviOstacolo){
 		gameOver = true;
 		rimuoviOstacolo = controllaScudo(i);
@@ -17,8 +17,8 @@ function controllaCollisioni(){
 	i--;  // prendo l'indice dell'ostacolo precedente
 	if(i >= 0){  // se ha senso
 		var posOstacoloZ = (50*(i+1));
-		var distanzaZ = calcolaDistanzaZ(i); // Meta' della "lunghezza" dell'ostacolo
-		var distanzaX = calcolaDistanzaX(i); // Meta' della "larghezza" dell'ostacolo
+		var distanzaZ = calcolaDistanzaZ(i); // Meta' della "lunghezza" dell'ostacolo (dipende dal tipo dell'ostacolo)
+		var distanzaX = calcolaDistanzaX(i); // Meta' della "larghezza" dell'ostacolo (dipende dal tipo dell'ostacolo)
 		if(collisioneAsseZ("indietro", posOstacoloZ, offsetMacchinaZ, distanzaZ) && collisioneAsseX(i, offsetMacchinaX, distanzaX) && i != rimuoviOstacolo){
 			gameOver = true;
 			rimuoviOstacolo = controllaScudo(i);
@@ -30,20 +30,18 @@ function controllaScudo(i){
 	if(powerUpAttivi[2] > -pivotMacchina.position.z){  // se avrei perso ma ho lo scudo
 		gameOver = false;  // non ho perso
 		powerUpAttivi[2] = 0;  // ma perdo lo scudo
-		return i;
+		return i; // numero dell'ostacolo che ho appena colpito (con lo scudo), quindi se al frame successivo la variabile rimuoviOstacolo = indice del prossimo ostacolo ignoro la collisione
 	}else {
-		return -1;
+		return -1; // -1 sara sempre != dall'indice del prossimo ostacolo
 	}
 }
 
-/*
-* Controlla se la macchina ha una collisione con un bonus, in tal caso aggiorna i dati relativi a tale bonus e
-* elimina il bonus dalla scena.
-*/
+
+// Controlla se la macchina ha una collisione con un bonus, in tal caso aggiorna i dati relativi al bonus e lo elimina dalla scena
 function controllaCollisioniBonus(){
 	if(powerUpInScena.length > 0){  // se ha senso
 		var prossimoBonus = powerUpInScena[0];
-		var distanzaZ = 1; // Valore predefinito per il bonus, in modo da avere un'area cubica piuttosto che irregolare;
+		var distanzaZ = 1; // Valore predefinito per il bonus, sono cubi di lato 2 (quindi distanza dal centro e' 1)
 		var distanzaX = 1;
 		var tipoProssimoBonus = powerUpInScenaTipo[0]; // Stringa che rappresenta il prossimo bonus;
 		if(-pivotMacchina.position.z - 5 >= -powerUpInScena[0].position.z){ // Se la macchina ha superato completamente il bonus passa al successivo;
@@ -51,23 +49,23 @@ function controllaCollisioniBonus(){
 			powerUpInScenaTipo.shift();
 			prossimoBonus = powerUpInScena[0];
 			tipoProssimoBonus = powerUpInScenaTipo[0];
-		}else{ // Se il prossimo bonus e' corretto
+		}else{ // Se la macchina non ha superato il bonus controllo l'eventuale collisione
 			if(collisioneAsseZ("avanti", -prossimoBonus.position.z, offsetMacchinaZ, 1) && collisioneAsseXPowerUp(prossimoBonus, offsetMacchinaX)){  // collisione avanti
-				aggiungiBonus(tipoProssimoBonus);
-				scene.remove(powerUpInScena[0]);
-				powerUpInScena.shift();
+				aggiungiBonus(tipoProssimoBonus); // aggiunge il bonus alla macchina quando questa li raccoglie
+				scene.remove(powerUpInScena[0]); // rimuovo il bonus dalla scena (l'ho preso)
+				powerUpInScena.shift(); // rimuovo il bonus dagli array
 				powerUpInScenaTipo.shift();
 			}else if(collisioneAsseZ("indietro", -prossimoBonus.position.z, offsetMacchinaZ, 1) && collisioneAsseXPowerUp(prossimoBonus, offsetMacchinaX)){  // collisione indietro
-				aggiungiBonus(tipoProssimoBonus);
-				scene.remove(powerUpInScena[0]);
-				powerUpInScena.shift();
+				aggiungiBonus(tipoProssimoBonus); // aggiunge il bonus alla macchina quando questa li raccoglie
+				scene.remove(powerUpInScena[0]); // rimuovo il bonus dalla scena (l'ho preso)
+				powerUpInScena.shift(); // rimuovo il bonus dagli array
 				powerUpInScenaTipo.shift();
 			}
 		}
 	}
 }
 
-// Funzione per calcolare la misura su X dell'oggetto, in modo da coprire l'intera superfice;
+// Funzione per calcolare la misura su X dell'oggetto
 function calcolaDistanzaX(i){
 	switch(tipoOstacoli[i]){
 		case "tronco":
@@ -99,13 +97,13 @@ function collisioneAsseX(i, offsetMacchinaX, distanzaX){
 function collisioneAsseXPowerUp(prossimoBonus, offsetMacchinaX){
 	var xProssimoBonus = prossimoBonus.position.x ;
 	var xMacchina = pivotMacchina.position.x;
-	if (xProssimoBonus > 0){ // Se si trova a destra
+	if(xProssimoBonus > 0){ // Bonus sul lato destro
 		if((xMacchina + offsetMacchinaX) >= (xProssimoBonus - 1)){
 			return true;
 		}else{
 			return false;
 		}
-	}else{
+	}else{ // Bonus sul lato sinistro
 		if((xMacchina - offsetMacchinaX) <= (xProssimoBonus + 1)){
 			return true;
 		}else{
@@ -114,7 +112,7 @@ function collisioneAsseXPowerUp(prossimoBonus, offsetMacchinaX){
 	}
 }
 
-// Funzione per calcolare metà la distanza dell'oggetto, in modo da coprire l'intera superfice;
+// Funzione per calcolare la misura su Z dell'oggetto
 function calcolaDistanzaZ(i){
 	switch(tipoOstacoli[i]){
 		case "tronco":
